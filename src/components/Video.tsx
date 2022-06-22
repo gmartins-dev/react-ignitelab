@@ -1,3 +1,7 @@
 export function Video() {
-  return <h1>Videooo</h1>;
+  return (
+    <div className="flex-1">
+      Video
+    </div>
+  );
 }
