@@ -1,13 +1,23 @@
-import { Header } from "../components/Header";
-import { Sidebar } from "../components/Sidebar";
-import { Video } from "../components/Video";
+import { useParams } from 'react-router-dom';
+import { Header } from '../components/Header';
+import { Logo } from '../components/Logo';
+import { Sidebar } from '../components/Sidebar';
+import { Video } from '../components/Video';
 
 export function Event() {
+  const { slug } = useParams<{ slug: string }>();
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex flex-1">
-        <Video />
+        {slug ? (
+          <Video lessonSlug={slug} />
+        ) : (
+          <div className="flex items-center justify-center w-full py-5">
+            <Logo />
+          </div>
+        )}
         <Sidebar />
       </main>
     </div>

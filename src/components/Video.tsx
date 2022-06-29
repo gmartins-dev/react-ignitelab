@@ -6,14 +6,64 @@ import {
   FileArrowDown,
   Lightning,
 } from 'phosphor-react';
+import { gql, useQuery } from '@apollo/client';
 
-export function Video() {
+const GET_LESSON_BY_SLUG_QUERY = gql`
+  query GetLessonBySlug($slug: String) {
+    lesson(where: { slug: $slug }) {
+      title
+      videoId
+      description
+      teacher {
+        bio
+        avatarURL
+        name
+      }
+    }
+  }
+`;
+
+interface GetLessonBySlugResponse {
+  lesson: {
+    title: string;
+    videoId: string;
+    description: string;
+    teacher: {
+      bio: string;
+      avatarURL: string;
+      name: string;
+    };
+  };
+}
+
+interface VideoProps {
+  lessonSlug: string;
+}
+
+export function Video(props: VideoProps) {
+  const { data } = useQuery<GetLessonBySlugResponse>(
+    GET_LESSON_BY_SLUG_QUERY,
+    {
+      variables: { slug: props.lessonSlug },
+    },
+  );
+
+  console.log(data);
+
+  if (!data) {
+    return (
+      <div className="flex-1">
+        <h2>Carregando...</h2>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1">
       <div className="flex justify-center bg-black">
         <div className="h-full w-full max-w-[1100px] max-h-[60vh] aspect-video">
           <Player>
-            <Youtube videoId="xMVzdUUqPqs" />
+            <Youtube videoId={data.lesson.videoId} />
             <DefaultUi />
           </Player>
         </div>
@@ -23,25 +73,25 @@ export function Video() {
         <div className="flex items-start gap-16">
           <div className="flex-1">
             <h1 className="text-2xl font-bold">
-              Aula 01 - Abertura do Ignite Lab
+              {data.lesson.title}
             </h1>
             <p className="mt-12 leading-relaxed text-gray-200">
-              Nessa aula vamos dar inicio.......
+              {data.lesson.description}
             </p>
 
             <div className="flex items-center gap-4 mt-6">
               <img
                 className="w-16 h-16 border-2 border-blue-500 rounded-full"
-                src="https://github.com/guilhermemm-dev.png"
+                src={data.lesson.teacher.avatarURL}
                 alt="github avatar"
               />
 
               <div className="leading-relaxed">
                 <strong className="block text-2xl font-bold">
-                  Guilherme Martins
+                  {data.lesson.teacher.name}
                 </strong>
                 <strong className="block text-sm text-gray-200">
-                  Front-end Developer
+                  {data.lesson.teacher.bio}
                 </strong>
               </div>
             </div>
