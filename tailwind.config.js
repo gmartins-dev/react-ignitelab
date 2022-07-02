@@ -34,6 +34,9 @@ module.exports = {
           900: '#09090A',
         },
       },
+      screens: {
+        xsm: '360px',
+      },
     },
   },
   plugins: [],
